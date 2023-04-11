@@ -45,3 +45,23 @@ mtt.register("Promise.emerge_area", function(callback)
         callback()
     end)
 end)
+
+mtt.register("Promise.handle_async", function(callback)
+    local fn = function(x, y)
+        return x*y
+    end
+    Promise.handle_async(fn, 5, 2):next(function(result)
+        assert(result == 10)
+        callback()
+    end)
+end)
+
+mtt.register("Promise.handle_async (no params)", function(callback)
+    local fn = function()
+        return 42
+    end
+    Promise.handle_async(fn):next(function(result)
+        assert(result == 42)
+        callback()
+    end)
+end)

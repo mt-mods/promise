@@ -10,7 +10,7 @@ promise library for minetest
 
 Features:
 * Async event handling
-* Utilities for formspec, emerge_area, http and delay
+* Utilities for formspec, emerge_area, handle_async, http and minetest.after
 
 # Examples
 
@@ -54,7 +54,24 @@ Promise.all(p1, p2):next(function(values)
 end)
 ```
 
-## Api
+Wait for multiple async workers:
+```lua
+local fn = function(x,y)
+    return x*y
+end
+
+local p1 = Promise.handle_async(fn, 1, 1)
+local p2 = Promise.handle_async(fn, 2, 2)
+local p3 = Promise.handle_async(fn, 10, 2)
+
+Promise.all(p1, p2, p3):next(function(values)
+    assert(values[1] == 1)
+    assert(values[2] == 4)
+    assert(values[3] == 20)
+end)
+```
+
+# Api
 
 ## `Promise.new(callback)`
 
@@ -141,6 +158,10 @@ Promise.formspec(player, "size[2,2]button[0,0;2,2;mybutton;label]")
 end)
 ```
 
+## `Promise.handle_async(fn, args...)`
+
+Executes the function `fn` in the async environment with given arguments
+**NOTE:** This falls back to a simple function-call if the `minetest.handle_async` function isn't available.
 
 ## `Promise.http(http, url, opts)`
 
