@@ -8,8 +8,131 @@ promise library for minetest
 
 # Overview
 
-TODO
+Features:
+* Async event handling
+* Utilities for formspec, emerge_area, http and delay
 
+# Examples
+
+
+Simple promise and handling:
+```lua
+-- create promise
+local p = Promise.new(function(resolve, reject)
+    -- async operation here, mocked for this example
+    minetest.after(1, function()
+        resolve("result-from-a-long-operation")
+    end)
+end)
+
+-- handle the result later
+p:next(function(result)
+    assert(result == "result-from-a-long-operation")
+end)
+```
+
+Chained async operations:
+```lua
+Promise.emerge_area(pos1, pos2):next(function()
+    -- delay a second before next operation
+    return Promise.after(1)
+end):next(function()
+    -- called after emerge + 1 second delay
+end)
+```
+
+Wait for multiple http requests:
+```lua
+local http = minetest.request_http_api()
+
+local p1 = Promise.http(http, "http://localhost/x")
+local p2 = Promise.http(http, "http://localhost/y")
+
+Promise.all(p1, p2):next(function(values)
+    local x = values[1]
+    local y = values[2]
+end)
+```
+
+## Api
+
+## `Promise.new(callback)`
+
+Creates a new promise
+
+Example:
+```lua
+local p = Promise.new(function(resolve, reject)
+    -- TODO: async operation and resolve(value) or reject(err)
+    -- NOTE: the value needs to be non-nil for the promise to resolve properly
+end)
+
+p:then(function(result)
+    -- TODO: handle the result
+end):catch(function(err)
+    -- TODO: handle the error
+end)
+```
+
+Alternatively:
+```lua
+-- promise without callback
+local p = Promise.new()
+-- later on: resolve from outside
+p:resolve(result)
+```
+
+## `Promise.resolved(value)`
+
+Returns an already resolved promise with given value
+
+## `Promise.rejected(err)`
+
+Returns an already rejected promise with given error
+
+## `Promise.all(...)`
+
+Wait for all promises to finish
+
+Example:
+```lua
+local p1 = Promise.resolved(5)
+local p2 = Promise.resolved(10)
+
+Promise.all(p1, p2):next(function(values)
+    assert(#values == 2)
+    assert(values[1] == 5)
+    assert(values[2] == 10)
+end)
+```
+
+## `Promise.race(...)`
+
+Wait for the first promise to finish
+
+Example:
+```lua
+local p1 = Promise.resolved(5)
+local p2 = Promise.new()
+
+Promise.race(p1, p2):next(function(v)
+    assert(v == 5)
+end)
+```
+
+## `Promise.after(delay, value, err)`
+
+Returns a delayed promise that resolves to given value or error
+
+## `Promise.emerge_area(pos1, pos2)`
+
+Emerges the given area and resolves to `true` afterwards
+
+## `Promise.formspec(player, formspec)`
+
+Formspec shorthand / util
+
+Example:
 ```lua
 Promise.formspec(player, "size[2,2]button[0,0;2,2;mybutton;label]")
 :next(function(data)
@@ -18,6 +141,21 @@ Promise.formspec(player, "size[2,2]button[0,0;2,2;mybutton;label]")
 end)
 ```
 
+
+## `Promise.http(http, url, opts)`
+
+Http query
+
+* `http` The http instance returned from `minetest.request_http_api()`
+* `url` The url to call
+* `opts` Table with options:
+  * `json` parse result as json (default: false)
+  * `method` The http method (default: "GET")
+  * `timeout` Timeout in seconds (default: 10)
+  * `data` Data to transfer, serialized as json if type is `table`
+  * `headers` table of additional headers
+
+Examples:
 ```lua
 local http = minetest.request_http_api()
 
@@ -32,6 +170,7 @@ Promise.http(http, "http://localhost/stuff", { method = "POST", timeout = 10, da
 :next(function(result)
     assert(result)
 end):catch(function(result)
+    -- result.code can be 0 if the timeout was reached
     assert(result.code == 500)
     assert(result.data == "Server error")
 end)
@@ -39,4 +178,4 @@ end)
 
 # License
 
-* Code: MIT
+* Code: MIT (adapted from https://github.com/Billiam/promise.lua)

@@ -16,6 +16,10 @@ function Promise.http(http, url, opts)
             table.insert(extra_headers, "Content-Type: application/json")
         end
 
+        for _, h in ipairs(opts.headers or {}) do
+            table.insert(extra_headers, h)
+        end
+
         http.fetch({
             url = url,
             extra_headers = extra_headers,
