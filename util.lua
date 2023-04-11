@@ -1,14 +1,14 @@
 
 function Promise.resolved(value)
-    return Promise.new(function(resolve)
-        resolve(value)
-    end)
+    local p = Promise.new()
+    p:resolve(value)
+    return p
 end
 
 function Promise.rejected(value)
-    return Promise.new(function(_, reject)
-        reject(value)
-    end)
+    local p = Promise.new()
+    p:reject(value)
+    return p
 end
 
 function Promise.after(delay, value)

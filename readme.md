@@ -10,6 +10,14 @@ promise library for minetest
 
 TODO
 
+```lua
+Promise.formspec(player, "size[2,2]button[0,0;2,2;mybutton;label]")
+:then(function(data)
+    assert(data.player:get_player_name())
+    assert(data.fields.mybutton == true)
+end)
+```
+
 # License
 
 * Code: MIT
