@@ -3,8 +3,6 @@
 -- Port of https://github.com/rhysbrettbowen/promise_impl/blob/master/promise.js
 -- and https://github.com/rhysbrettbowen/Aplus
 -- Source: https://github.com/Billiam/promise.lua
-local queue = {}
-
 local State = {
   PENDING   = 'pending',
   FULFILLED = 'fulfilled',
@@ -34,11 +32,7 @@ Promise = {
 Promise.mt = { __index = Promise }
 
 local do_async = function(callback)
-  if Promise.async then
-    Promise.async(callback)
-  else
-    table.insert(queue, callback)
-  end
+  minetest.after(0, callback)
 end
 
 local reject = function(promise, reason)
@@ -202,18 +196,6 @@ function Promise:reject(reason)
   reject(self, reason)
 end
 
-function Promise.update()
-  while true do
-    local async = table.remove(queue, 1)
-
-    if not async then
-      break
-    end
-
-    async()
-  end
-end
-
 -- resolve when all promises complete
 function Promise.all(...)
   local promises = {...}
@@ -269,8 +251,4 @@ function Promise.race(...)
   end
 
   return promise
-end
-
-Promise.async = function(callback)
-  minetest.after(0, callback)
 end
