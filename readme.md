@@ -200,3 +200,5 @@ end)
 # License
 
 * Code: MIT (adapted from https://github.com/Billiam/promise.lua)
+
+![Yo dawg](yo.jpg)
