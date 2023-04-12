@@ -9,7 +9,7 @@ function Promise.http(http, url, opts)
     return Promise.new(function(resolve, reject)
         local extra_headers = {}
 
-        local data = opts.post_data
+        local data = opts.data
         if type(data) == "table" then
             -- serialize as json
             data = minetest.write_json(data)
