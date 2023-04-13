@@ -81,7 +81,6 @@ Example:
 ```lua
 local p = Promise.new(function(resolve, reject)
     -- TODO: async operation and resolve(value) or reject(err)
-    -- NOTE: the value needs to be non-nil for the promise to resolve properly
 end)
 
 p:then(function(result)
