@@ -142,7 +142,7 @@ Returns a delayed promise that resolves to given value or error
 
 ## `Promise.emerge_area(pos1, pos2)`
 
-Emerges the given area and resolves to `true` afterwards
+Emerges the given area and resolves afterwards
 
 ## `Promise.formspec(player, formspec)`
 
