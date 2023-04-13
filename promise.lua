@@ -33,10 +33,6 @@ local prototype = {
 
 local mt = { __index = prototype }
 
-local do_async = function(callback)
-  minetest.after(0, callback)
-end
-
 local reject = function(promise, reason)
   transition(promise, State.REJECTED, reason)
 end
@@ -139,7 +135,7 @@ end
 run = function(promise)
   if promise.state == State.PENDING then return end
 
-  do_async(function()
+  minetest.after(0, function()
     -- drain promise.queue while allowing pushes from within callbacks
     local q = promise.queue
     local i = 0
