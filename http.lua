@@ -28,7 +28,7 @@ function Promise.http(http, url, opts)
             data = data
         }, function(res)
             if res.succeeded and res.code >= 200 and res.code < 400 then
-                if opts.json then
+                if opts.json and res.data and #res.data > 0 then
                     resolve(minetest.parse_json(res.data))
                 else
                     resolve(res.data)
