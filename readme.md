@@ -83,6 +83,9 @@ local p = Promise.new(function(resolve, reject)
     -- TODO: async operation and resolve(value) or reject(err)
 end)
 
+-- test if the value is a promise
+assert(p.is_promise == true)
+
 p:then(function(result)
     -- TODO: handle the result
 end):catch(function(err)
