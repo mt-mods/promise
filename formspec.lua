@@ -8,7 +8,12 @@ end)
 
 minetest.register_on_player_receive_fields(function(player, id, fields)
     local playername = player:get_player_name()
-    local p = formspec_promises[id]
+    local cb_map = formspec_promises[playername]
+    if not cb_map then
+        return false
+    end
+
+    local p = cb_map[id]
     if not p then
         return false
     end
@@ -19,10 +24,7 @@ minetest.register_on_player_receive_fields(function(player, id, fields)
     })
 
     -- cleanup
-    local cb_map = formspec_promises[playername]
-    if cb_map then
-        cb_map[id] = nil
-    end
+    cb_map[id] = nil
     return true
 end)
 

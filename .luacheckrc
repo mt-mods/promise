@@ -1,5 +1,6 @@
 globals = {
-	"Promise"
+	"Promise",
+	"minetest" -- for testing
 }
 
 read_globals = {
@@ -8,7 +9,6 @@ read_globals = {
 	table = {fields = {"copy", "getn"}},
 
 	-- Minetest
-	"minetest",
 	"vector", "ItemStack",
 	"dump", "dump2",
 	"AreaStore",
