@@ -40,6 +40,6 @@ function Promise.formspec(player, formspec)
         formspec_promises[playername] = cb_map
     end
     cb_map[id] = p
-    minetest.show_formspec(player:get_player_name(), id, formspec)
+    minetest.show_formspec(playername, id, formspec)
     return p
 end
