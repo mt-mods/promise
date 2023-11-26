@@ -199,6 +199,22 @@ end):catch(function(result)
 end)
 ```
 
+## `Promise.dynamic_add_media(options)`
+
+Dynamic media push
+
+Example:
+```lua
+Promise.dynamic_add_media({ filepath = "world/image.png", to_player = "singleplayer" })
+:next(function(name)
+    -- player callback
+end):catch(function()
+    -- error handling
+end)
+```
+
+**NOTE**: experimental, only works if the `to_player` property is set
+
 # License
 
 * Code: MIT (adapted from https://github.com/Billiam/promise.lua)
