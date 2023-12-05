@@ -217,6 +217,17 @@ end):catch(function(result)
 end)
 ```
 
+## `Promise.mods_loaded()`
+
+Resolved on mods loaded (`minetest.register_on_mods_loaded`)
+
+Example:
+```lua
+Promise.mods_loaded():next(function()
+    -- stuff that runs when all mods are loaded
+end)
+```
+
 ## `Promise.dynamic_add_media(options)`
 
 Dynamic media push
