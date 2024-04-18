@@ -1,4 +1,4 @@
-name: test-action
+name: test
 
 on: [push, pull_request]
 
@@ -11,5 +11,9 @@ jobs:
     - uses: buckaroobanzay/mtt@main
       with:
         modname: promise
+        enable_coverage: "true"
         git_dependencies: |
           https://github.com/BuckarooBanzay/mtt
+        additional_config: |
+          secure.http_mods = promise
+    - uses: coverallsapp/github-action@v1
