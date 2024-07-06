@@ -102,3 +102,23 @@ mtt.register("Promise.race", function(callback)
         callback()
     end)
 end)
+
+mtt.register("Promise control logic", function(callback)
+    Promise.new(function(resolve)
+        resolve(math.random())
+    end):next(function(r)
+        if r < 0.5 then
+            -- branch 1
+            return Promise.new(function(resolve)
+                resolve(math.random())
+            end)
+        else
+            -- branch 2
+            return Promise.new(function(resolve)
+                resolve(math.random())
+            end)
+        end
+    end):next(function()
+        callback()
+    end)
+end)
