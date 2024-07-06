@@ -110,6 +110,10 @@ Returns an already resolved promise with given value
 
 Returns an already rejected promise with given error
 
+## `Promise.empty()`
+
+Returns an already resolved promise with a `nil` value
+
 ## `Promise.all(...)`
 
 Wait for all promises to finish

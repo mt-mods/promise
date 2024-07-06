@@ -5,6 +5,11 @@ function Promise.resolved(value)
     return p
 end
 
+-- empty promise
+function Promise.empty()
+    return Promise.resolved(nil)
+end
+
 function Promise.rejected(value)
     local p = Promise.new()
     p:reject(value)

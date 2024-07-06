@@ -6,6 +6,13 @@ mtt.register("Promise.resolved", function(callback)
     end)
 end)
 
+mtt.register("Promise.empty", function(callback)
+    Promise.empty():next(function(result)
+        assert(not result)
+        callback()
+    end)
+end)
+
 mtt.register("Promise.rejected", function(callback)
     Promise.rejected("nope")
     :catch(function(err)
