@@ -29,6 +29,7 @@ function Promise.after(delay, value, err)
 end
 
 function Promise.emerge_area(pos1, pos2)
+    pos2 = pos2 or pos1
     return Promise.new(function(resolve)
         minetest.emerge_area(pos1, pos2, function(_, _, calls_remaining)
             if calls_remaining == 0 then

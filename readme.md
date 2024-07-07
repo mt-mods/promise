@@ -146,15 +146,15 @@ end)
 
 **NOTE**: errors don't get propagated when calling `race` only successful results
 
-## `Promise.after(delay, value, err)`
+## `Promise.after(delay, value?, err?)`
 
 Returns a delayed promise that resolves to given value or error
 
-## `Promise.emerge_area(pos1, pos2)`
+## `Promise.emerge_area(pos1, pos2?)`
 
 Emerges the given area and resolves afterwards
 
-## `Promise.formspec(player, formspec, callback)`
+## `Promise.formspec(player, formspec, callback?)`
 
 Formspec shorthand / util
 
@@ -190,7 +190,7 @@ Executes the function `fn` in the async environment with given arguments
 
 **NOTE:** This falls back to a simple function-call if the `minetest.handle_async` function isn't available.
 
-## `Promise.http(http, url, opts)`
+## `Promise.http(http, url, opts?)`
 
 Http query
 
