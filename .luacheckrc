@@ -9,5 +9,5 @@ read_globals = {
 	-- missing from minetest std
 	"unpack",
 	-- opt deps
-	"mtt"
+	"mtt", "fakelib"
 }

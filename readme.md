@@ -144,6 +144,8 @@ Promise.race(p1, p2):next(function(v)
 end)
 ```
 
+**NOTE**: errors don't get propagated when calling `race` only successful results
+
 ## `Promise.after(delay, value, err)`
 
 Returns a delayed promise that resolves to given value or error
@@ -233,6 +235,10 @@ Promise.mods_loaded():next(function()
     -- stuff that runs when all mods are loaded
 end)
 ```
+
+## `Promise.on_punch(pos, timeout?)`
+
+Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
 
 ## `Promise.dynamic_add_media(options)`
 
