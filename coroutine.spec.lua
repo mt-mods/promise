@@ -1,35 +1,22 @@
 
-mtt.register("coroutine handling", function(callback)
-    --[[
-    local v1 = Promise.async(function()
-        local v = Promise.await(Promise.after(1, 42))
+mtt.register("Promise.sync", function(callback)
+    local p = Promise.sync(function()
+        local v = Promise.await(Promise.after(0, 42))
         assert(v == 42)
+        local v1 = Promise.await(Promise.resolved(666))
+        assert(v1 == 666)
         return v
     end)
-    assert(v1 == 42)
-    --]]
 
-    local t = coroutine.create(function()
-        coroutine.yield(1)
-        coroutine.yield(2)
-        minetest.after(0, function()
-            coroutine.yield(3) -- attempt to yield across C-call boundary
-        end)
-    end)
-
-    minetest.after(1, function()
-        while true do
-            local cont, i = coroutine.resume(t)
-            print(dump({
-                cont = cont,
-                i = i,
-                status = coroutine.status(t)
-            }))
-            if not cont then
-                break
-            end
-        end
-
+    p:next(function(v)
+        assert(v == 42)
         callback()
+    end)
+end)
+
+mtt.register("Promise.sync 2", function()
+    return Promise.sync(function()
+        local v = Promise.await(Promise.resolved(42))
+        assert(v == 42)
     end)
 end)
