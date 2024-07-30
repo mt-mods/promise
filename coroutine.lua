@@ -1,25 +1,5 @@
 
-function Promise.sync(fn)
-    local t = coroutine.create(fn)
-    local p = Promise.new()
-
-    local step = nil
-    local result = nil
-    local _ = nil
-    step = function()
-        if coroutine.status(t) == "suspended" then
-            _, result = coroutine.resume(t)
-            minetest.after(0, step)
-        else
-            p:resolve(result)
-        end
-    end
-    step()
-
-    return p
-end
-
-function Promise.await(p)
+local function await(p)
     assert(coroutine.running(), "running inside a Promise.sync() call")
     local result = nil
     local err = nil
@@ -49,4 +29,24 @@ function Promise.await(p)
             coroutine.yield()
         end
     end
+end
+
+function Promise.async(fn)
+    local t = coroutine.create(fn)
+    local p = Promise.new()
+
+    local step = nil
+    local result = nil
+    local _ = nil
+    step = function()
+        if coroutine.status(t) == "suspended" then
+            _, result = coroutine.resume(t, await)
+            minetest.after(0, step)
+        else
+            p:resolve(result)
+        end
+    end
+    step()
+
+    return p
 end
