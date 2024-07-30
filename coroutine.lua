@@ -21,15 +21,29 @@ end
 
 function Promise.await(p)
     local result = nil
+    local err = nil
     local finished = false
+
     p:next(function(...)
         result = {...}
         finished = true
+    end):catch(function(e)
+        print(dump({
+            fn = "catch",
+            err = e
+        }))
+        err = e
+        finished = true
     end)
+
     while true do
         if finished then
             coroutine.yield({ done = true })
-            return unpack(result)
+            if err then
+                return error(err)
+            else
+                return unpack(result)
+            end
         else
             coroutine.yield()
         end

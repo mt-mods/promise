@@ -14,9 +14,31 @@ mtt.register("Promise.sync", function(callback)
     end)
 end)
 
-mtt.register("Promise.sync 2", function()
+mtt.register("Promise.sync simple", function()
     return Promise.sync(function()
         local v = Promise.await(Promise.resolved(42))
         assert(v == 42)
     end)
 end)
+
+mtt.register("Promise.sync with handle_async", function()
+    return Promise.sync(function()
+        local v = Promise.await(Promise.resolved(42))
+        assert(v == 42)
+        v = Promise.await(Promise.handle_async(function() return 100 end))
+        assert(v == 100)
+    end)
+end)
+
+--[[
+mtt.register("Promise.sync rejected", function(callback)
+    local p = Promise.sync(function()
+        Promise.await(Promise.rejected("my-err"))
+    end)
+
+    p:catch(function(e)
+        -- assert(e == "my-err")
+        callback()
+    end)
+end)
+--]]
