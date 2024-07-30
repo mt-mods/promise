@@ -12,14 +12,24 @@ mtt.register("coroutine handling", function(callback)
     local t = coroutine.create(function()
         coroutine.yield(1)
         coroutine.yield(2)
+        minetest.after(0, function()
+            coroutine.yield(3) -- attempt to yield across C-call boundary
+        end)
     end)
 
-    print(coroutine.resume(t))
-    print(coroutine.status(t))
-    print(coroutine.resume(t))
-    print(coroutine.status(t))
-    print(coroutine.resume(t))
-    print(coroutine.status(t))
+    minetest.after(1, function()
+        while true do
+            local cont, i = coroutine.resume(t)
+            print(dump({
+                cont = cont,
+                i = i,
+                status = coroutine.status(t)
+            }))
+            if not cont then
+                break
+            end
+        end
 
-    callback()
+        callback()
+    end)
 end)
