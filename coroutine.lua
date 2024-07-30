@@ -1,6 +1,8 @@
 
+local err_symbol = {}
+
 local function await(p)
-    assert(coroutine.running(), "running inside a Promise.sync() call")
+    assert(coroutine.running(), "running inside a Promise.async() call")
     local result = nil
     local err = nil
     local finished = false
@@ -9,19 +11,14 @@ local function await(p)
         result = {...}
         finished = true
     end):catch(function(e)
-        print(dump({
-            fn = "catch",
-            err = e
-        }))
         err = e
         finished = true
     end)
 
     while true do
         if finished then
-            coroutine.yield({ done = true })
             if err then
-                return error(err)
+                return coroutine.yield({ err = err, err_symbol = err_symbol })
             else
                 return unpack(result)
             end
@@ -37,12 +34,23 @@ function Promise.async(fn)
 
     local step = nil
     local result = nil
+    local cont = nil
     local _ = nil
     step = function()
         if coroutine.status(t) == "suspended" then
-            _, result = coroutine.resume(t, await)
+            cont, result = coroutine.resume(t, await)
+            if not cont then
+                -- error in first async() level
+                p:reject(result)
+            end
+            if type(result) == "table" and result.err_symbol == err_symbol then
+                -- error in await() call
+                p:reject(result.err)
+                return
+            end
             minetest.after(0, step)
         else
+            -- last result from resume was the return value
             p:resolve(result)
         end
     end

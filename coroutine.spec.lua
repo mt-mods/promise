@@ -30,15 +30,13 @@ mtt.register("Promise.async with handle_async", function()
     end)
 end)
 
---[[
 mtt.register("Promise.async rejected", function(callback)
     local p = Promise.async(function(await)
         await(Promise.rejected("my-err"))
     end)
 
     p:catch(function(e)
-        -- assert(e == "my-err")
+        assert(type(e) == "string")
         callback()
     end)
 end)
---]]
