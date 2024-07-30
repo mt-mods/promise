@@ -20,6 +20,7 @@ function Promise.sync(fn)
 end
 
 function Promise.await(p)
+    assert(coroutine.running(), "running inside a Promise.sync() call")
     local result = nil
     local err = nil
     local finished = false

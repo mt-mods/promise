@@ -5,11 +5,11 @@ mtt.register("Promise.sync", function(callback)
         assert(v == 42)
         local v1 = Promise.await(Promise.resolved(666))
         assert(v1 == 666)
-        return v
+        return 99
     end)
 
     p:next(function(v)
-        assert(v == 42)
+        assert(v == 99)
         callback()
     end)
 end)
