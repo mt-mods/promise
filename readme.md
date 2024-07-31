@@ -236,6 +236,7 @@ Example:
 Promise.json(http, "https://api.chucknorris.io/jokes/random"):next(function(joke)
     assert(type(joke.value) == "string")
 end, function(err)
+    -- request not successful or response-status not 200
     print("something went wrong while calling the api: " .. err)
 end)
 ```
