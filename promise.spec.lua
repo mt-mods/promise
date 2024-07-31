@@ -59,13 +59,13 @@ mtt.register("error handling", function(callback)
 end)
 
 mtt.register("error handling 2", function(callback)
-    -- return rejected promise in resolved function
-    Promise.resolved(100):next(function(v)
-        assert(v == 100)
-        return Promise.rejected("nope")
-    end):next(function()
-        error("should not end up here")
-    end):catch(function(err)
+    Promise.rejected("nope"):catch(function(err)
+        -- "nope"
+        assert(err)
+    end)
+
+    Promise.rejected("nope"):next(function() end):catch(function(err)
+        -- "/home/user/.minetest/mods/promise/promise.lua:13: nope"
         assert(err)
         callback()
     end)

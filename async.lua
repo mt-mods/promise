@@ -8,7 +8,7 @@ local function await(p)
     p:next(function(...)
         result = {...}
         finished = true
-    end):catch(function(e)
+    end, function(e)
         err = e
         finished = true
     end)

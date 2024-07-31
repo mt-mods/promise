@@ -45,7 +45,7 @@ mtt.register("Promise.async error propagation", function()
     return Promise.async(function(await)
         local v, err = await(Promise.rejected("my-err"))
         assert(not v)
-        assert(err)
+        assert(err == "my-err")
     end)
 
 end)

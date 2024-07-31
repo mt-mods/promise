@@ -49,5 +49,11 @@ function Promise.http(http, url, opts)
 end
 
 function Promise.json(http, url, opts)
-    return Promise.http(http, url, opts):next(function(res) return res.json() end)
+    return Promise.http(http, url, opts):next(function(res)
+        if res.code == 200 then
+            return res.json()
+        else
+            return Promise.rejected("unexpected status-code: " .. res.code)
+        end
+    end)
 end

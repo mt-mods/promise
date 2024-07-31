@@ -235,6 +235,8 @@ Example:
 -- call chuck norris api: https://api.chucknorris.io/ and expect json-response
 Promise.json(http, "https://api.chucknorris.io/jokes/random"):next(function(joke)
     assert(type(joke.value) == "string")
+end, function(err)
+    print("something went wrong while calling the api: " .. err)
 end)
 ```
 
@@ -300,6 +302,24 @@ end):next(function(n)
     -- n is the result of the multiplication in the previous function
 end)
 ```
+
+Error handling:
+```lua
+Promise.async(function(await)
+    -- second result from await is the error if rejected
+    local data, err = await(Promise.rejected("nope"))
+    assert(err == "nope")
+end)
+```
+
+Error handling with http/json:
+```lua
+Promise.async(function(await)
+    local result, err = await(Promise.json(http, "https://httpbin.org/status/500"))
+    assert(err == "unexpected status-code: 500")
+end)
+```
+
 
 # License
 
