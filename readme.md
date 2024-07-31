@@ -11,6 +11,7 @@ promise library for minetest
 Features:
 * Async event handling
 * Utilities for formspec, emerge_area, handle_async, http and minetest.after
+* async/await helpers (js example [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
 
 # Examples
 
@@ -256,8 +257,47 @@ end)
 
 **NOTE**: experimental, only works if the `to_player` property is set
 
+# async/await with `Promise.async`
+
+Similar to [javascripts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) implementation async/await can be used in lua too with the help of [coroutines](https://www.lua.org/pil/9.1.html)
+
+Example: fetch a joke with async/await
+```lua
+local toJson = function(res) return res.json() end
+
+Promise.async(function(await)
+    local joke = await(Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(toJson))
+    assert(type(joke.value) == "string")
+    -- do stuff here with the joke
+end)
+```
+
+Example: sleep for a few seconds
+```lua
+Promise.async(function(await)
+    await(Promise.after(5))
+    -- 5 seconds passed
+end)
+```
+
+`Promise.async` returns a Promise that can be used with `:next` or `await` in another async function, for example:
+
+```lua
+local toJson = function(res) return res.json() end
+
+Promise.async(function(await)
+    local data = await(Promise.http(http, "https://my-api"):next(toJson))
+    return data.value * 200 -- "value" is a number
+end):next(function(n)
+    -- n is the result of the multiplication in the previous function
+end)
+```
+
 # License
 
 * Code: MIT (adapted from https://github.com/Billiam/promise.lua)
 
+<details>
+
 ![Yo dawg](yo.jpg)
+</details>

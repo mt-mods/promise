@@ -1,5 +1,7 @@
 local http = ...
 
+local toJson = function(res) return res.json() end
+
 mtt.register("Promise.http GET", function(callback)
     Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(function(res)
         return res.json()
@@ -11,8 +13,14 @@ mtt.register("Promise.http GET", function(callback)
     end)
 end)
 
+mtt.register("Promise.http GET with async/await", function()
+    return Promise.async(function(await)
+        local joke = await(Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(toJson))
+        assert(type(joke.value) == "string")
+    end)
+end)
+
 mtt.register("Promise.http/all GET", function(callback)
-    local toJson = function(res) return res.json() end
     local p1 = Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(toJson)
     local p2 = Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(toJson)
 
