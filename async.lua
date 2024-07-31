@@ -1,6 +1,4 @@
 
-local err_symbol = {}
-
 local function await(p)
     assert(coroutine.running(), "running inside a Promise.async() call")
     local result = nil
@@ -18,7 +16,7 @@ local function await(p)
     while true do
         if finished then
             if err then
-                return coroutine.yield({ err = err, err_symbol = err_symbol })
+                return nil, err
             else
                 return unpack(result)
             end
@@ -42,10 +40,6 @@ function Promise.async(fn)
             if not cont then
                 -- error in first async() level
                 p:reject(result)
-            end
-            if type(result) == "table" and result.err_symbol == err_symbol then
-                -- error in await() call
-                p:reject(result.err)
                 return
             end
             minetest.after(0, step)
