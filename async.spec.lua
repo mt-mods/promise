@@ -49,3 +49,15 @@ mtt.register("Promise.async rejected", function(callback)
         callback()
     end)
 end)
+
+mtt.register("Promise.async error", function(callback)
+    local p = Promise.async(function()
+        error("stuff")
+    end)
+
+    p:catch(function(e)
+        -- "/home/user/.minetest/mods/promise/async.spec.lua:55: stuff"
+        assert(type(e) == "string")
+        callback()
+    end)
+end)
