@@ -275,10 +275,8 @@ Similar to [javascripts](https://developer.mozilla.org/en-US/docs/Web/JavaScript
 
 Example: fetch a joke with async/await
 ```lua
-local toJson = function(res) return res.json() end
-
 Promise.async(function(await)
-    local joke = await(Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(toJson))
+    local joke = await(Promise.json(http, "https://api.chucknorris.io/jokes/random"))
     assert(type(joke.value) == "string")
     -- do stuff here with the joke
 end)
@@ -295,10 +293,8 @@ end)
 `Promise.async` returns a Promise that can be used with `:next` or `await` in another async function, for example:
 
 ```lua
-local toJson = function(res) return res.json() end
-
 Promise.async(function(await)
-    local data = await(Promise.http(http, "https://my-api"):next(toJson))
+    local data = await(Promise.json(http, "https://my-api"))
     return data.value * 200 -- "value" is a number
 end):next(function(n)
     -- n is the result of the multiplication in the previous function
