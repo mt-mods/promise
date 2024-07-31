@@ -47,3 +47,7 @@ function Promise.http(http, url, opts)
         end)
     end)
 end
+
+function Promise.json(http, url, opts)
+    return Promise.http(http, url, opts):next(function(res) return res.json() end)
+end

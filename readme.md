@@ -226,6 +226,18 @@ end):catch(function(res)
 end)
 ```
 
+## `Promise.json(http, url, opts?)`
+
+Helper function for `Promise.http` that parses a json response
+
+Example:
+```lua
+-- call chuck norris api: https://api.chucknorris.io/ and expect json-response
+Promise.json(http, "https://api.chucknorris.io/jokes/random"):next(function(joke)
+    assert(type(joke.value) == "string")
+end)
+```
+
 ## `Promise.mods_loaded()`
 
 Resolved on mods loaded (`minetest.register_on_mods_loaded`)
