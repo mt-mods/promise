@@ -47,7 +47,18 @@ mtt.register("Promise.async error propagation", function()
         assert(not v)
         assert(err == "my-err")
     end)
+end)
 
+mtt.register("Promise.async error rejected", function(callback)
+    local p = Promise.async(function()
+        -- return a promise in async function
+        return Promise.rejected("nope")
+    end)
+    
+    p:catch(function(e)
+        assert(e == "nope")
+        callback()
+    end)
 end)
 
 mtt.register("Promise.async direct error", function(callback)
