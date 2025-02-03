@@ -1,3 +1,4 @@
+local http_debug = minetest.settings:get_bool("Promise.http_debug", false)
 
 local function response_wrapper(res)
     return {
@@ -17,6 +18,8 @@ function Promise.http(http, url, opts)
 
     -- defaults
     opts = opts or {}
+    opts.timeout = opts.timeout or 10
+    opts.method = opts.method or "GET"
 
     return Promise.new(function(resolve, reject)
         local extra_headers = {}
@@ -32,13 +35,29 @@ function Promise.http(http, url, opts)
             table.insert(extra_headers, h)
         end
 
+        if http_debug then
+            minetest.log("action", "[Promise] fetch request: " .. dump({
+                method = opts.method,
+                timeout = opts.timeout,
+                data = data,
+                extra_headers = extra_headers,
+                url = url
+            }))
+        end
         http.fetch({
             url = url,
             extra_headers = extra_headers,
-            timeout = opts.timeout or 10,
-            method = opts.method or "GET",
+            timeout = opts.timeout,
+            method = opts.method,
             data = data
         }, function(res)
+            if http_debug then
+                minetest.log("action", "[Promise] fetch response: " .. dump({
+                    url = url,
+                    code = res.code,
+                    data = res.data
+                }))
+            end
             if res.succeeded then
                 resolve(response_wrapper(res))
             else
