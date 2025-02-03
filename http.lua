@@ -71,6 +71,8 @@ function Promise.json(http, url, opts)
     return Promise.http(http, url, opts):next(function(res)
         if res.code == 200 then
             return res.json()
+        elseif res.code == 204 or res.code == 404 then
+            return nil
         else
             return Promise.rejected("unexpected status-code: " .. res.code)
         end
