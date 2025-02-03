@@ -168,7 +168,8 @@ function Promise.new(callback)
   setmetatable(instance, mt)
 
   if callback then
-    callback(
+    -- catch error in first callback function
+    local success, err = pcall(callback,
       function(value)
         resolve(instance, value)
       end,
@@ -176,6 +177,10 @@ function Promise.new(callback)
         reject(instance, reason)
       end
     )
+
+    if not success then
+      return Promise.rejected(err)
+    end
   end
 
   return instance

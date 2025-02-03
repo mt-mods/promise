@@ -103,6 +103,18 @@ local p = Promise.new()
 p:resolve(result)
 ```
 
+**NOTE:** pass a `0` to the `error` function if you want to evaluate the error directly:
+
+```lua
+Promise.new(function()
+    error("nope", 0)
+end):catch(function(err)
+    assert(err == "nope")
+end)
+```
+
+Reference: https://www.lua.org/manual/5.3/manual.html#pdf-error
+
 ## `Promise.resolved(value)`
 
 Returns an already resolved promise with given value

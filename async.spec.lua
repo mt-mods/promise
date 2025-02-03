@@ -52,12 +52,12 @@ end)
 
 mtt.register("Promise.async direct error", function(callback)
     local p = Promise.async(function()
-        error("stuff")
+        error("stuff", 0)
     end)
 
     p:catch(function(e)
-        -- "/home/user/.minetest/mods/promise/async.spec.lua:55: stuff"
         assert(type(e) == "string")
+        assert(e == "stuff")
         callback()
     end)
 end)
