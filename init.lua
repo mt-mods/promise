@@ -9,6 +9,7 @@ dofile(MP.."/util.lua")
 dofile(MP.."/http.lua")
 dofile(MP.."/formspec.lua")
 dofile(MP.."/async.lua")
+dofile(MP.."/chatcommand.lua")
 
 if minetest.get_modpath("mtt") and mtt.enabled then
 	local http = minetest.request_http_api()

@@ -284,6 +284,25 @@ end)
 
 **NOTE**: experimental, only works if the `to_player` property is set
 
+## `Promise.register_chatcommand(cmd, def)`
+
+Chatcommand helper with wrappers for success and error.
+Shows messages after the returned promise fails or succeeds and prints the error or success-value if the type is "string"
+
+Usage:
+
+```lua
+Promise.register_chatcommand("something", {
+    description = "Does something",
+    func = function(name)
+        return Promise.new(function(resolve, reject)
+            resolve("processed 123 items")
+            -- or: reject("something went wrong")
+        end)
+    end
+})
+```
+
 # async/await with `Promise.async`
 
 Similar to [javascripts](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) implementation async/await can be used in lua too with the help of [coroutines](https://www.lua.org/pil/9.1.html)
