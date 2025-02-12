@@ -40,7 +40,7 @@ end)
 
 function Promise.formspec(player, formspec, callback)
     local p = Promise.new()
-    local id = "" .. math.floor(math.random() * 100000)
+    local id = "promise_" .. math.floor(math.random() * 100000)
 
     local playername = player:get_player_name()
     local cb_map = formspec_promises[playername]
