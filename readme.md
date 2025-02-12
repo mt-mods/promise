@@ -93,6 +93,11 @@ p:then(function(result)
 end):catch(function(err)
     -- TODO: handle the error
 end)
+
+p:finally(function()
+    -- always called after error or success
+    -- TODO: handle cleanup/common things here
+end)
 ```
 
 Alternatively:

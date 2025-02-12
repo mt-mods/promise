@@ -190,6 +190,10 @@ function prototype:catch(callback)
   return self:next(nil, callback)
 end
 
+function prototype:finally(callback)
+  return self:next(callback, callback)
+end
+
 function prototype:resolve(value)
   fulfill(self, value)
 end
