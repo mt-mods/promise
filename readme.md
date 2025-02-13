@@ -86,7 +86,8 @@ local p = Promise.new(function(resolve, reject)
 end)
 
 -- test if the value is a promise
-assert(p.is_promise == true)
+assert(p.is_promise == true) -- field value
+assert(Promise.is_promise(p)) -- function
 
 p:then(function(result)
     -- TODO: handle the result

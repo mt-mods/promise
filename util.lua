@@ -16,6 +16,10 @@ function Promise.rejected(value)
     return p
 end
 
+function Promise.is_promise(p)
+    return type(p) == "table" and p.is_promise
+end
+
 function Promise.after(delay, value, err)
     return Promise.new(function(resolve, reject)
         minetest.after(delay, function()
