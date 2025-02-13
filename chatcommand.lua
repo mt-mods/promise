@@ -26,7 +26,7 @@ function Promise.register_chatcommand(cmd, def)
     local old_func = def.func
     def.func = function(name, params)
         local t0 = minetest.get_us_time()
-        local p = old_func(name, params)
+        local p, chat_msg = old_func(name, params)
         if p and p.is_promise then
             -- result is a promise, add success- and error-wrappers
             p:next(function(v)
@@ -41,8 +41,8 @@ function Promise.register_chatcommand(cmd, def)
 
             return true
         else
-            -- not a promise
-            return p
+            -- not a promise, return plain values
+            return p, chat_msg
         end
     end
 
