@@ -179,7 +179,7 @@ function Promise.new(callback)
     )
 
     if not success then
-      return Promise.rejected(err)
+      return Promise.reject(err)
     end
   end
 
@@ -206,6 +206,7 @@ end
 function Promise.all(...)
   local promises = {...}
   local results = {}
+  local errors = {}
   local state = State.FULFILLED
   local remaining = #promises
 
@@ -215,7 +216,11 @@ function Promise.all(...)
     if remaining > 0 then
       return
     end
-    transition(promise, state, results)
+    if state == State.FULFILLED then
+      transition(promise, state, results)
+    else
+      transition(promise, state, errors)
+    end
   end
 
   for i,p in ipairs(promises) do
@@ -225,8 +230,8 @@ function Promise.all(...)
         remaining = remaining - 1
         check_finished()
       end,
-      function(value)
-        results[i] = value
+      function(err)
+        errors[i] = err
         remaining = remaining - 1
         state = State.REJECTED
         check_finished()
@@ -239,21 +244,44 @@ function Promise.all(...)
   return promise
 end
 
--- resolve with first promise to complete
+-- resolve with first promise to settle (rejected or fulfilled)
 function Promise.race(...)
   local promises = {...}
   local promise = Promise.new()
-
-  Promise.all(...):next(nil, function(value)
-    reject(promise, value)
-  end)
 
   local success = function(value)
     fulfill(promise, value)
   end
 
+  local failure = function(err)
+    reject(promise, err)
+  end
+
   for _,p in ipairs(promises) do
-    p:next(success)
+    p:next(success):catch(failure)
+  end
+
+  return promise
+end
+
+-- resolve with the first fulfilled or all rejected
+function Promise.any(...)
+  local promises = {...}
+  local promise = Promise.new()
+  local errors = {}
+  local error_count = 0
+
+  for i,p in ipairs(promises) do
+    p:next(function(v)
+      fulfill(promise, v)
+    end):catch(function(err)
+      errors[i] = err
+      error_count = error_count + 1
+      if error_count == #promises then
+        -- all failed
+        reject(promise, errors)
+      end
+    end)
   end
 
   return promise

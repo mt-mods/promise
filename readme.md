@@ -121,11 +121,11 @@ end)
 
 Reference: https://www.lua.org/manual/5.3/manual.html#pdf-error
 
-## `Promise.resolved(value)`
+## `Promise.resolve(value)`
 
 Returns an already resolved promise with given value
 
-## `Promise.rejected(err)`
+## `Promise.reject(err)`
 
 Returns an already rejected promise with given error
 
@@ -139,8 +139,8 @@ Wait for all promises to finish
 
 Example:
 ```lua
-local p1 = Promise.resolved(5)
-local p2 = Promise.resolved(10)
+local p1 = Promise.resolve(5)
+local p2 = Promise.resolve(10)
 
 Promise.all(p1, p2):next(function(values)
     assert(#values == 2)
@@ -149,19 +149,43 @@ Promise.all(p1, p2):next(function(values)
 end)
 ```
 
+* Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
 ## `Promise.race(...)`
 
 Wait for the first promise to finish
 
 Example:
 ```lua
-local p1 = Promise.resolved(5)
+local p1 = Promise.resolve(5)
 local p2 = Promise.new()
 
 Promise.race(p1, p2):next(function(v)
     assert(v == 5)
 end)
 ```
+
+The `race()` function can be used for timeouts, for example:
+
+```lua
+local p = Promise.new() -- never resolves
+local to = Promise.after(5, nil, "timeout") -- rejects after 5 seconds
+
+Promise.race(p, to):next(function(v)
+    -- process "v"
+end):catch(function(err)
+    -- timeout reached (err == "timeout")
+end)
+
+```
+
+* Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race
+
+## `Promise.any(...)`
+
+Returns the first fulfilled promise or rejects if all promises reject.
+
+* Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any
 
 **NOTE**: errors don't get propagated when calling `race` only successful results
 
@@ -343,7 +367,7 @@ Error handling:
 ```lua
 Promise.async(function(await)
     -- second result from await is the error if rejected
-    local data, err = await(Promise.rejected("nope"))
+    local data, err = await(Promise.reject("nope"))
     assert(err == "nope")
 end)
 ```

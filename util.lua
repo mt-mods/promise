@@ -1,20 +1,24 @@
 
-function Promise.resolved(value)
+function Promise.resolve(value)
     local p = Promise.new()
     p:resolve(value)
     return p
 end
+-- legacy
+Promise.resolved = Promise.resolve
 
 -- empty promise
 function Promise.empty()
-    return Promise.resolved(nil)
+    return Promise.resolve(nil)
 end
 
-function Promise.rejected(value)
+function Promise.reject(value)
     local p = Promise.new()
     p:reject(value)
     return p
 end
+-- legacy
+Promise.rejected = Promise.reject
 
 function Promise.is_promise(p)
     return type(p) == "table" and p.is_promise

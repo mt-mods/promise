@@ -4,10 +4,10 @@ local function response_wrapper(res)
     return {
         code = res.code,
         json = function()
-            return Promise.resolved(minetest.parse_json(res.data))
+            return Promise.resolve(minetest.parse_json(res.data))
         end,
         text = function()
-            return Promise.resolved(res.data)
+            return Promise.resolve(res.data)
         end
     }
 end
@@ -74,7 +74,7 @@ function Promise.json(http, url, opts)
         elseif res.code == 204 or res.code == 404 then
             return nil
         else
-            return Promise.rejected("unexpected status-code: " .. res.code)
+            return Promise.reject("unexpected status-code: " .. res.code)
         end
     end)
 end
