@@ -173,17 +173,16 @@ Returns a delayed promise that resolves to given value or error
 
 Emerges the given area and resolves afterwards
 
-## `Promise.formspec(player, formspec, callback?)`
+## `Promise.formspec(playername, formspec, callback?)`
 
 Formspec shorthand / util
 
 Example:
 ```lua
-Promise.formspec(player, "size[2,2]button_exit[0,0;2,2;mybutton;label]")
+Promise.formspec(playername, "size[2,2]button_exit[0,0;2,2;mybutton;label]")
 :next(function(data)
     -- formspec closed
-    assert(data.player:get_player_name())
-    assert(data.fields.mybutton == true)
+    assert(fields.mybutton == true)
 end)
 ```
 
@@ -195,11 +194,10 @@ local callback = function(fields)
     -- TODO: handle CHG, and other "non-quit" events here
 end
 
-Promise.formspec(player, "size[2,2]button_exit[0,0;2,2;mybutton;label]", callback)
-:next(function(data)
+Promise.formspec(playername, "size[2,2]button_exit[0,0;2,2;mybutton;label]", callback)
+:next(function(fields)
     -- formspec closed
-    assert(data.player:get_player_name())
-    assert(data.fields.mybutton == true)
+    assert(fields.mybutton == true)
 end)
 ```
 
