@@ -105,7 +105,7 @@ function Promise.on_punch(pos, timeout)
     timeout = timeout or 5
 
     local p = Promise.new()
-    local pt = Promise.after(timeout, "timeout")
+    local pt = Promise.after(timeout, nil, "timeout")
 
     local hash = minetest.hash_node_position(pos)
 
@@ -117,13 +117,5 @@ function Promise.on_punch(pos, timeout)
     end
     table.insert(list, p)
 
-    return Promise.new(function(resolve, reject)
-        Promise.race(p, pt):next(function(data)
-            if data == "timeout" then
-                reject("timeout")
-            else
-                resolve(data)
-            end
-        end)
-    end)
+    return Promise.race(p, pt)
 end
