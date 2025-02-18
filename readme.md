@@ -176,7 +176,6 @@ Promise.race(p, to):next(function(v)
 end):catch(function(err)
     -- timeout reached (err == "timeout")
 end)
-
 ```
 
 * Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/race
@@ -186,8 +185,6 @@ end)
 Returns the first fulfilled promise or rejects if all promises reject.
 
 * Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any
-
-**NOTE**: errors don't get propagated when calling `race` only successful results
 
 ## `Promise.after(delay, value?, err?)`
 
@@ -204,7 +201,7 @@ Formspec shorthand / util
 Example:
 ```lua
 Promise.formspec(playername, "size[2,2]button_exit[0,0;2,2;mybutton;label]")
-:next(function(data)
+:next(function(fields)
     -- formspec closed
     assert(fields.mybutton == true)
 end)
