@@ -41,8 +41,10 @@ function Promise.async(fn)
                 p:reject(result)
                 return
             end
-        else
-            -- last result from resume was the return value
+        end
+
+        if coroutine.status(t) == "dead" then
+            -- async function exited
             p:resolve(result)
         end
     end
