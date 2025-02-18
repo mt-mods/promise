@@ -169,7 +169,7 @@ The `race()` function can be used for timeouts, for example:
 
 ```lua
 local p = Promise.new() -- never resolves
-local to = Promise.after(5, nil, "timeout") -- rejects after 5 seconds
+local to = Promise.timeout(5) -- rejects after 5 seconds
 
 Promise.race(p, to):next(function(v)
     -- process "v"
@@ -189,6 +189,10 @@ Returns the first fulfilled promise or rejects if all promises reject.
 ## `Promise.after(delay, value?, err?)`
 
 Returns a delayed promise that resolves to given value or error
+
+## `Promise.timeout(delay)`
+
+Returns a promise that rejects with "timeout" after the given delay. Useful in comination with `Promise.race()`
 
 ## `Promise.emerge_area(pos1, pos2?)`
 

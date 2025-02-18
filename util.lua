@@ -12,6 +12,11 @@ function Promise.empty()
     return Promise.resolve(nil)
 end
 
+-- rejects with a timeout after a given delay
+function Promise.timeout(delay)
+    return Promise.after(delay, nil, "timeout")
+end
+
 function Promise.reject(value)
     local p = Promise.new()
     p:reject(value)
@@ -105,8 +110,6 @@ function Promise.on_punch(pos, timeout)
     timeout = timeout or 5
 
     local p = Promise.new()
-    local pt = Promise.after(timeout, nil, "timeout")
-
     local hash = minetest.hash_node_position(pos)
 
     -- create and/or append
@@ -117,5 +120,5 @@ function Promise.on_punch(pos, timeout)
     end
     table.insert(list, p)
 
-    return Promise.race(p, pt)
+    return Promise.race(p, Promise.timeout(timeout))
 end
