@@ -60,6 +60,9 @@ function Promise.http(http, url, opts)
             end
             if res.succeeded then
                 resolve(response_wrapper(res))
+            elseif res.code == 0 then
+                -- timeout (most likely)
+                reject("timeout")
             else
                 reject(res)
             end
