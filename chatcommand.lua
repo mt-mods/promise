@@ -30,13 +30,17 @@ function Promise.register_chatcommand(cmd, def)
         if Promise.is_promise(p) then
             -- result is a promise, add success- and error-wrappers
             p:next(function(v)
-                local msg = get_message(t0, cmd, params, v, true)
-                minetest.log("action", msg)
-                minetest.chat_send_player(name, msg)
+                if def.handle_success ~= false then
+                    local msg = get_message(t0, cmd, params, v, true)
+                    minetest.log("action", msg)
+                    minetest.chat_send_player(name, msg)
+                end
             end):catch(function(e)
-                local msg = get_message(t0, cmd, params, e, false)
-                minetest.log("error", msg)
-                minetest.chat_send_player(name, minetest.colorize("#ff0000", msg))
+                if def.handle_error ~= false then
+                    local msg = get_message(t0, cmd, params, e, false)
+                    minetest.log("error", msg)
+                    minetest.chat_send_player(name, minetest.colorize("#ff0000", msg))
+                end
             end)
 
             return true

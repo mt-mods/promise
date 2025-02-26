@@ -328,7 +328,9 @@ Promise.register_chatcommand("something", {
             resolve("processed 123 items")
             -- or: reject("something went wrong")
         end)
-    end
+    end,
+    handle_success = false, -- optional, if false: disable success message
+    handle_error = false -- optional, if false: disable error message
 })
 ```
 
