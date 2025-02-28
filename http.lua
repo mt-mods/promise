@@ -12,6 +12,8 @@ local function response_wrapper(res)
     }
 end
 
+Promise.HTTP_TIMEOUT = "http timeout"
+
 function Promise.http(http, url, opts)
     assert(http, "http instance is nil")
     assert(url, "no url given")
@@ -62,7 +64,7 @@ function Promise.http(http, url, opts)
                 resolve(response_wrapper(res))
             elseif res.code == 0 then
                 -- timeout (most likely)
-                reject("timeout")
+                reject(Promise.HTTP_TIMEOUT)
             else
                 reject(res)
             end

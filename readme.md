@@ -244,6 +244,8 @@ Http query
   * `data` Data to transfer, serialized as json if type is `table`
   * `headers` table of additional headers
 
+Rejects with `Promise.HTTP_TIMEOUT` in case of timeouts (or connection errors)
+
 Examples:
 ```lua
 local http = minetest.request_http_api()
@@ -253,6 +255,9 @@ Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(function(res)
     return res.json()
 end):next(function(joke)
     assert(type(joke.value) == "string")
+end):catch(function(e)
+    -- conection refused or timed out:
+    -- e == Promise.HTTP_TIMEOUT
 end)
 
 -- post json-payload with 10 second timeout and expect raw string-response (or error)
@@ -270,6 +275,12 @@ end)
 ## `Promise.json(http, url, opts?)`
 
 Helper function for `Promise.http` that parses a json response
+
+HTTP Status code handling:
+
+* `200`: resolves with a parsed json object
+* `204` or `404`: resolves with a `nil` value
+* Everything else: rejects with `unexpected status-code`
 
 Example:
 ```lua
