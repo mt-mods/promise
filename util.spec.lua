@@ -103,8 +103,11 @@ mtt.register("Promise.asyncify (success)", function()
         assert(b == 2)
         assert(c == 3)
         await(Promise.after(0))
+        return "ok"
     end)
-    return fn(1,2,3)
+    return fn(1,2,3):next(function(v)
+        assert(v == "ok")
+    end)
 end)
 
 mtt.register("Promise.asyncify (fail)", function(callback)

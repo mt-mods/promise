@@ -111,7 +111,7 @@ function Promise.asyncify(fn)
         local args = {...}
         return Promise.async(function(await)
             table.insert(args, 1, await)
-            fn(unpack(args))
+            return fn(unpack(args))
         end)
     end
 end
