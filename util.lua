@@ -106,6 +106,16 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
     end
 end)
 
+function Promise.asyncify(fn)
+    return function(...)
+        local args = {...}
+        return Promise.async(function(await)
+            table.insert(args, 1, await)
+            fn(unpack(args))
+        end)
+    end
+end
+
 function Promise.on_punch(pos, timeout)
     timeout = timeout or 5
 

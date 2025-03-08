@@ -304,6 +304,34 @@ Promise.mods_loaded():next(function()
 end)
 ```
 
+## `Promise.asyncify(fn)`
+
+Turns a normal function into an async function. The first parameter will be the `await` function.
+
+Example:
+```lua
+-- normal function
+local fn = function(await,a,b,c)
+    assert(type(await) == "function")
+    assert(a == 1)
+    assert(b == 2)
+    assert(c == 3)
+    await(Promise.after(0))
+    return "ok"
+end
+
+-- async function
+local async_fn = Promise.asyncify(fn)
+
+-- invoke with params
+local p = fn(1,2,3)
+
+-- use as a promise
+p:next(function(v)
+    assert(v == "ok")
+end)
+```
+
 ## `Promise.on_punch(pos, timeout?)`
 
 Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
