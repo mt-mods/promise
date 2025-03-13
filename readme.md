@@ -324,7 +324,7 @@ end
 local async_fn = Promise.asyncify(fn)
 
 -- invoke with params
-local p = fn(1,2,3)
+local p = async_fn(1,2,3)
 
 -- use as a promise
 p:next(function(v)
