@@ -121,9 +121,9 @@ mtt.register("Promise.asyncify (fail)", function(callback)
 end)
 
 if minetest.get_modpath("fakelib") then
-    mtt.register("Promise.on_punch", function()
+    mtt.register("Promise.on_punch_pos", function()
         local pos = vector.new(10,20,30)
-        local p = Promise.on_punch(pos)
+        local p = Promise.on_punch_pos(pos)
 
         local node = { name="default:mese" }
         local puncher = fakelib.create_player()
@@ -140,12 +140,67 @@ if minetest.get_modpath("fakelib") then
         end)
     end)
 
-    mtt.register("Promise.on_punch (timeout)", function(callback)
+    mtt.register("Promise.on_punch_pos (another pos)", function(callback)
         local pos = vector.new(10,20,30)
-        local p = Promise.on_punch(pos, 1)
+        local p = Promise.on_punch_pos(pos, 1)
+
+        local node = { name="default:mese" }
+        local puncher = fakelib.create_player()
+        local pointed_thing = {}
+        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+            fn(vector.add(pos, 1), node, puncher, pointed_thing)
+        end
 
         p:catch(function()
             callback()
+        end)
+    end)
+
+    mtt.register("Promise.on_punch_pos (timeout)", function(callback)
+        local pos = vector.new(10,20,30)
+        local p = Promise.on_punch_pos(pos, 1)
+
+        p:catch(function()
+            callback()
+        end)
+    end)
+
+    mtt.register("Promise.on_punch_nodename", function()
+        local pos = vector.new(10,20,30)
+        local p = Promise.on_punch_nodename("default:mese")
+
+        local node = { name="default:mese" }
+        local puncher = fakelib.create_player()
+        local pointed_thing = {}
+        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+            fn(pos, node, puncher, pointed_thing)
+        end
+
+        return p:next(function(data)
+            assert(vector.equals(data.pos, pos))
+            assert(data.node == node)
+            assert(data.puncher == puncher)
+            assert(data.pointed_thing == pointed_thing)
+        end)
+    end)
+
+
+    mtt.register("Promise.on_punch_playername", function()
+        local pos = vector.new(10,20,30)
+        local puncher = fakelib.create_player()
+        local p = Promise.on_punch_playername(puncher:get_player_name())
+
+        local node = { name="default:mese" }
+        local pointed_thing = {}
+        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+            fn(pos, node, puncher, pointed_thing)
+        end
+
+        return p:next(function(data)
+            assert(vector.equals(data.pos, pos))
+            assert(data.node == node)
+            assert(data.puncher == puncher)
+            assert(data.pointed_thing == pointed_thing)
         end)
     end)
 end

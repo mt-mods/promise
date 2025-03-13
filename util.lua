@@ -83,29 +83,6 @@ minetest.register_on_mods_loaded(function()
     mods_loaded_promise:resolve()
 end)
 
--- pos-hash -> list<Promise>
-local punchnode_promises = {}
-
-minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
-    local hash = minetest.hash_node_position(pos)
-
-    -- get and clear list for this pos
-    local list = punchnode_promises[hash]
-    punchnode_promises[hash] = nil
-
-    -- execute promise resolve
-    if list then
-        for _, p in ipairs(list) do
-            p:resolve({
-                pos = pos,
-                node = node,
-                puncher = puncher,
-                pointed_thing = pointed_thing
-            })
-        end
-    end
-end)
-
 function Promise.asyncify(fn)
     return function(...)
         local args = {...}
@@ -116,19 +93,77 @@ function Promise.asyncify(fn)
     end
 end
 
-function Promise.on_punch(pos, timeout)
-    timeout = timeout or 5
+-- punchnode callbacks: hashes -> list<Promise>
+local punchnode_pos_hashes = {}
+local punchnode_nodenames = {}
+local punchnode_playernames = {}
 
-    local p = Promise.new()
-    local hash = minetest.hash_node_position(pos)
+local function run_callbacks(callbacks, key, data)
+    -- get entry
+    local list = callbacks[key]
+    if not list then
+        -- nothing to do
+        return
+    end
 
-    -- create and/or append
-    local list = punchnode_promises[hash]
+    -- clear entry and resolve promises
+    callbacks[key] = nil
+    for _, p in ipairs(list) do
+        p:resolve(data)
+    end
+end
+
+local function add_callback(callbacks, key, p)
+    local list = callbacks[key]
     if not list then
         list = {}
-        punchnode_promises[hash] = list
+        callbacks[key] = list
     end
     table.insert(list, p)
+end
 
-    return Promise.race(p, Promise.timeout(timeout))
+-- cleanup playername callbacks
+minetest.register_on_leaveplayer(function(player)
+    local playername = player:get_player_name()
+    punchnode_playernames[playername] = nil
+end)
+
+minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
+    local data = {
+        pos = pos,
+        node = node,
+        puncher = puncher,
+        pointed_thing = pointed_thing
+    }
+
+    -- pos callback
+    run_callbacks(punchnode_pos_hashes, minetest.hash_node_position(pos), data)
+
+    -- nodename callback
+    if node and node.name then
+        run_callbacks(punchnode_nodenames, node.name, data)
+    end
+
+    -- playername callbacks
+    if puncher then
+        run_callbacks(punchnode_playernames, puncher:get_player_name(), data)
+    end
+end)
+
+function Promise.on_punch_pos(pos, timeout)
+    local p = Promise.new()
+    add_callback(punchnode_pos_hashes, minetest.hash_node_position(pos), p)
+    return Promise.race(p, Promise.timeout(timeout or 5))
+end
+
+function Promise.on_punch_nodename(nodename, timeout)
+    local p = Promise.new()
+    add_callback(punchnode_nodenames, nodename, p)
+    return Promise.race(p, Promise.timeout(timeout or 5))
+end
+
+function Promise.on_punch_playername(playername, timeout)
+    local p = Promise.new()
+    add_callback(punchnode_playernames, playername, p)
+    return Promise.race(p, Promise.timeout(timeout or 5))
 end

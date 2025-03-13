@@ -332,9 +332,28 @@ p:next(function(v)
 end)
 ```
 
-## `Promise.on_punch(pos, timeout?)`
+## `Promise.on_punch_pos(pos, timeout?)`
 
 Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolving value:
+```lua
+{
+    pos = Vector,
+    node = {name="", ...},
+    puncher = PlayerObj,
+    pointed_thing = { ... }
+}
+```
+
+## `Promise.on_punch_nodename(nodename, timeout?)`
+
+Resolves when the node with name `nodename` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolving value is the same as `Promise.on_punch_pos`
+
+## `Promise.on_punch_playername(playername, timeout?)`
+
+Resolves when a node is hit by the player with name `playername` or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolving value is the same as `Promise.on_punch_pos`
 
 ## `Promise.dynamic_add_media(options)`
 
