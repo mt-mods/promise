@@ -304,6 +304,14 @@ Promise.mods_loaded():next(function()
 end)
 ```
 
+## `Promise.joinplayer(playername)`
+
+Resolves with the player object when the player joins
+
+## `Promise.leaveplayer(playername)`
+
+Resolves when the player leaves (does not resolve with a value, unlike `joinplayer`)
+
 ## `Promise.asyncify(fn)`
 
 Turns a normal function into an async function. The first parameter will be the `await` function.

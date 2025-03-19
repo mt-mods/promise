@@ -6,6 +6,7 @@ Promise = {
 
 dofile(MP.."/promise.lua")
 dofile(MP.."/util.lua")
+dofile(MP.."/player.lua")
 dofile(MP.."/concurrency.lua")
 dofile(MP.."/http.lua")
 dofile(MP.."/formspec.lua")
@@ -18,6 +19,7 @@ if minetest.get_modpath("mtt") and mtt.enabled then
 	dofile(MP .. "/promise.spec.lua")
 	dofile(MP .. "/formspec.spec.lua")
 	dofile(MP .. "/util.spec.lua")
+	dofile(MP .. "/player.spec.lua")
 	dofile(MP .. "/concurrency.spec.lua")
 	dofile(MP .. "/async.spec.lua")
 	if http then
