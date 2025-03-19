@@ -304,11 +304,11 @@ Promise.mods_loaded():next(function()
 end)
 ```
 
-## `Promise.joinplayer(playername)`
+## `Promise.joinplayer(playername, timeout?)`
 
-Resolves with the player object when the player joins
+Resolves with the player object when the player joins (defaults to a 5 second timeout)
 
-## `Promise.leaveplayer(playername)`
+## `Promise.leaveplayer(playername, timeout?)`
 
 Resolves when the player leaves (does not resolve with a value, unlike `joinplayer`)
 

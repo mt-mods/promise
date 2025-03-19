@@ -11,13 +11,13 @@ minetest.register_on_joinplayer(function(player)
     end
 end)
 
-function Promise.joinplayer(playername)
+function Promise.joinplayer(playername, timeout)
     local p = joinplayer_promises[playername]
     if not p then
         p = Promise.new()
         joinplayer_promises[playername] = p
     end
-    return p
+    return Promise.race(p, Promise.timeout(timeout or 5))
 end
 
 -- playername -> promise
@@ -32,11 +32,11 @@ minetest.register_on_leaveplayer(function(player)
     end
 end)
 
-function Promise.leaveplayer(playername)
+function Promise.leaveplayer(playername, timeout)
     local p = leaveplayer_promises[playername]
     if not p then
         p = Promise.new()
         leaveplayer_promises[playername] = p
     end
-    return p
+    return Promise.race(p, Promise.timeout(timeout or 5))
 end
