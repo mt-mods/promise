@@ -340,6 +340,24 @@ p:next(function(v)
 end)
 ```
 
+## `Promise.cache(seconds, fn)`
+
+Simple caching utility
+
+Example:
+```lua
+local somethingExpensive()
+    return 42
+end
+
+-- cached the result for 5 seconds
+local cachedFn = Promise.cache(5, somethingExpensive)
+
+-- function result is cached for 5 seconds
+local n = cachedFn()
+local n2 = cachedFn()
+```
+
 ## `Promise.on_punch_pos(pos, timeout?)`
 
 Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.

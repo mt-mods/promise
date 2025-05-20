@@ -11,6 +11,7 @@ dofile(MP.."/concurrency.lua")
 dofile(MP.."/http.lua")
 dofile(MP.."/formspec.lua")
 dofile(MP.."/async.lua")
+dofile(MP.."/cache.lua")
 dofile(MP.."/chatcommand.lua")
 
 if minetest.get_modpath("mtt") and mtt.enabled then
@@ -22,6 +23,7 @@ if minetest.get_modpath("mtt") and mtt.enabled then
 	dofile(MP .. "/player.spec.lua")
 	dofile(MP .. "/concurrency.spec.lua")
 	dofile(MP .. "/async.spec.lua")
+	dofile(MP .. "/cache.spec.lua")
 	if http then
 		loadfile(MP .. "/http.spec.lua")(http)
 	end
