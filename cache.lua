@@ -8,9 +8,9 @@ function Promise.cache(seconds, fn)
 		local now = minetest.get_us_time()
 		if not value or cache_time < (now - micros) then
 			-- value does not exist or is expired
-			value = fn()
+			value = {fn()}
 			cache_time = now
 		end
-		return value
+		return unpack(value)
 	end
 end
