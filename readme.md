@@ -340,6 +340,24 @@ p:next(function(v)
 end)
 ```
 
+## `Promise.handle_asyncify(fn)`
+
+Returns the function wrapped into `Promise.handle_async`
+
+Example:
+
+```lua
+local fn = function(a,b)
+    return a * b -- something cpu-intensive
+end
+
+local async_fn = Promise.handle_asyncify(fn)
+
+async_fn(3,4):next(function(v)
+    assert(v == 12)
+end)
+```
+
 ## `Promise.cache(seconds, fn)`
 
 Simple caching utility

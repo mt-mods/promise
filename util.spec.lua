@@ -82,6 +82,18 @@ mtt.register("Promise.handle_async", function(callback)
     end)
 end)
 
+mtt.register("Promise.handle_asyncify", function(callback)
+    local fn = function(x, y)
+        return x*y
+    end
+
+    local async_fn = Promise.handle_asyncify(fn)
+    async_fn(5, 2):next(function(result)
+        assert(result == 10)
+        callback()
+    end)
+end)
+
 mtt.register("Promise.handle_async (no params)", function(callback)
     local fn = function()
         return 42

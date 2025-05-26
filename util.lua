@@ -93,6 +93,12 @@ function Promise.asyncify(fn)
     end
 end
 
+function Promise.handle_asyncify(fn)
+    return function(...)
+        return Promise.handle_async(fn, ...)
+    end
+end
+
 -- punchnode callbacks: hashes -> list<Promise>
 local punchnode_pos_hashes = {}
 local punchnode_nodenames = {}
