@@ -376,6 +376,23 @@ local n = cachedFn()
 local n2 = cachedFn()
 ```
 
+## `Promise.memoize(fn)`
+
+Simple memoization utility
+
+Example:
+```lua
+local somethingExpensive(a, b)
+    return a * b
+end
+
+-- memoize the result
+local memoizedFn = Promise.memoize(somethingExpensive)
+
+local n = memoizedFn(2,3)
+local n2 = memoizedFn(2,3) -- memoized
+```
+
 ## `Promise.on_punch_pos(pos, timeout?)`
 
 Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
