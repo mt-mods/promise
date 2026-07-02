@@ -13,7 +13,8 @@ mtt.register("Promise.formspec", function(callback)
     assert(type(minetest.registered_on_player_receive_fields) == "table")
 
     local player = {
-        get_player_name = function() return "singleplayer" end
+        get_player_name = function() return "singleplayer" end,
+        get_hp = function() return 20 end
     }
 
     Promise.formspec("singleplayer", "stuff[]")
