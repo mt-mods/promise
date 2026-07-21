@@ -393,6 +393,22 @@ local n = memoizedFn(2,3)
 local n2 = memoizedFn(2,3) -- memoized
 ```
 
+## `Promise.once()`
+
+Call-once function, useful for lazy initializations
+
+Example:
+```lua
+local i = 0
+local fn = Promise.once(function() i = i + 1 end)
+
+-- i == 0
+fn()
+-- i == 1
+fn()
+-- i == 1
+```
+
 ## `Promise.on_punch_pos(pos, timeout?)`
 
 Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.

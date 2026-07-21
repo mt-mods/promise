@@ -173,3 +173,16 @@ function Promise.on_punch_playername(playername, timeout)
     add_callback(punchnode_playernames, playername, p)
     return Promise.race(p, Promise.timeout(timeout or 5))
 end
+
+function Promise.once(fn)
+    local called = false
+    local result = nil
+
+    return function()
+        if not called then
+            result = fn()
+            called = true
+        end
+        return result
+    end
+end

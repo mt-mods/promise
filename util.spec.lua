@@ -132,6 +132,19 @@ mtt.register("Promise.asyncify (fail)", function(callback)
     end)
 end)
 
+mtt.register("Promise.once", function(callback)
+    local i = 0
+    local o = Promise.once(function() i = i + 1 end)
+
+    assert(i == 0)
+    o()
+    assert(i == 1)
+    o()
+    assert(i == 1)
+
+    callback()
+end)
+
 if minetest.get_modpath("fakelib") then
     mtt.register("Promise.on_punch_pos", function()
         local pos = vector.new(10,20,30)
