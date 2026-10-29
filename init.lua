@@ -19,6 +19,7 @@ if core.get_modpath("mtt") and mtt.enabled then
 	local http = core.request_http_api()
 
 	dofile(MP .. "/promise.spec.lua")
+	dofile(MP .. "/extended.spec.lua")
 	dofile(MP .. "/formspec.spec.lua")
 	dofile(MP .. "/util.spec.lua")
 	dofile(MP .. "/player.spec.lua")

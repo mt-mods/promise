@@ -144,7 +144,7 @@ run = function(promise)
         return callback(promise.value)
       end)
 
-      if not success and obj.reject == nil then
+      if not success and obj.reject == nil and promise.state == State.REJECTED then
         -- replace reason
         result = promise.value
       end
