@@ -1,4 +1,4 @@
-local MP = minetest.get_modpath("promise")
+local MP = core.get_modpath("promise")
 
 Promise = {
 	api_version = 1
@@ -15,8 +15,8 @@ dofile(MP.."/cache.lua")
 dofile(MP.."/memoize.lua")
 dofile(MP.."/chatcommand.lua")
 
-if minetest.get_modpath("mtt") and mtt.enabled then
-	local http = minetest.request_http_api()
+if core.get_modpath("mtt") and mtt.enabled then
+	local http = core.request_http_api()
 
 	dofile(MP .. "/promise.spec.lua")
 	dofile(MP .. "/formspec.spec.lua")

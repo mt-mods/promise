@@ -2,7 +2,7 @@ std = "min+minetest"
 
 globals = {
 	"Promise",
-	"minetest" -- for testing
+	"core" -- for testing
 }
 
 read_globals = {

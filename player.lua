@@ -2,7 +2,7 @@
 -- playername -> promise
 local joinplayer_promises = {}
 
-minetest.register_on_joinplayer(function(player)
+core.register_on_joinplayer(function(player)
     local playername = player:get_player_name()
     local p = joinplayer_promises[playername]
     if p then
@@ -23,7 +23,7 @@ end
 -- playername -> promise
 local leaveplayer_promises = {}
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
     local playername = player:get_player_name()
     local p = leaveplayer_promises[playername]
     if p then

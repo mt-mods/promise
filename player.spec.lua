@@ -1,4 +1,4 @@
-if minetest.get_modpath("fakelib") then
+if core.get_modpath("fakelib") then
     mtt.register("Promise.leaveplayer/joinplayer", function()
         return Promise.async(function(await)
             local joinedplayer = nil

@@ -1,16 +1,16 @@
-promise library for minetest
+promise library for luanti
 
 ![](https://github.com/mt-mods/promise/workflows/luacheck/badge.svg)
 ![](https://github.com/mt-mods/promise/workflows/test/badge.svg)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](license.txt)
-[![Download](https://img.shields.io/badge/Download-ContentDB-blue.svg)](https://content.minetest.net/packages/mt-mods/promise)
+[![Download](https://img.shields.io/badge/Download-ContentDB-blue.svg)](https://content.luanti.org/packages/mt-mods/promise)
 [![Coverage Status](https://coveralls.io/repos/github/mt-mods/promise/badge.svg?branch=master)](https://coveralls.io/github/mt-mods/promise?branch=master)
 
 # Overview
 
 Features:
 * Async event handling
-* Utilities for formspec, emerge_area, handle_async, http and minetest.after
+* Utilities for formspec, emerge_area, handle_async, http and core.after
 * async/await helpers (js example [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
 
 # Examples
@@ -21,7 +21,7 @@ Simple promise and handling:
 -- create promise
 local p = Promise.new(function(resolve, reject)
     -- async operation here, mocked for this example
-    minetest.after(1, function()
+    core.after(1, function()
         resolve("result-from-a-long-operation")
     end)
 end)
@@ -44,7 +44,7 @@ end)
 
 Wait for multiple http requests:
 ```lua
-local http = minetest.request_http_api()
+local http = core.request_http_api()
 local toJson = function(res) return res.json() end
 
 local p1 = Promise.http(http, "http://localhost/x"):next(toJson)
@@ -230,13 +230,13 @@ end)
 
 Executes the function `fn` in the async environment with given arguments
 
-**NOTE:** This falls back to a simple function-call if the `minetest.handle_async` function isn't available.
+**NOTE:** This falls back to a simple function-call if the `core.handle_async` function isn't available.
 
 ## `Promise.http(http, url, opts?)`
 
 Http query
 
-* `http` The http instance returned from `minetest.request_http_api()`
+* `http` The http instance returned from `core.request_http_api()`
 * `url` The url to call
 * `opts` Table with options:
   * `method` The http method (default: "GET")
@@ -248,7 +248,7 @@ Rejects with `Promise.HTTP_TIMEOUT` in case of timeouts (or connection errors)
 
 Examples:
 ```lua
-local http = minetest.request_http_api()
+local http = core.request_http_api()
 
 -- call chuck norris api: https://api.chucknorris.io/ and expect json-response
 Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(function(res)
@@ -295,7 +295,7 @@ end)
 
 ## `Promise.mods_loaded()`
 
-Resolved on mods loaded (`minetest.register_on_mods_loaded`)
+Resolved on mods loaded (`core.register_on_mods_loaded`)
 
 Example:
 ```lua

@@ -130,7 +130,7 @@ end
 run = function(promise)
   if promise.state == State.PENDING then return end
 
-  minetest.after(0, function()
+  core.after(0, function()
     -- drain promise.queue while allowing pushes from within callbacks
     local q = promise.queue
     local i = 0

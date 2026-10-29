@@ -1,10 +1,10 @@
-local http_debug = minetest.settings:get_bool("Promise.http_debug", false)
+local http_debug = core.settings:get_bool("Promise.http_debug", false)
 
 local function response_wrapper(res)
     return {
         code = res.code,
         json = function()
-            return Promise.resolve(minetest.parse_json(res.data))
+            return Promise.resolve(core.parse_json(res.data))
         end,
         text = function()
             return Promise.resolve(res.data)
@@ -29,7 +29,7 @@ function Promise.http(http, url, opts)
         local data = opts.data
         if type(data) == "table" then
             -- serialize as json
-            data = minetest.write_json(data)
+            data = core.write_json(data)
             table.insert(extra_headers, "Content-Type: application/json")
         end
 
@@ -38,7 +38,7 @@ function Promise.http(http, url, opts)
         end
 
         if http_debug then
-            minetest.log("action", "[Promise] fetch request: " .. dump({
+            core.log("action", "[Promise] fetch request: " .. dump({
                 method = opts.method,
                 timeout = opts.timeout,
                 data = data,
@@ -54,7 +54,7 @@ function Promise.http(http, url, opts)
             data = data
         }, function(res)
             if http_debug then
-                minetest.log("action", "[Promise] fetch response: " .. dump({
+                core.log("action", "[Promise] fetch response: " .. dump({
                     url = url,
                     code = res.code,
                     data = res.data

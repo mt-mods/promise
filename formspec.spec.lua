@@ -1,7 +1,7 @@
 
 local last_formname, last_formspec, last_playername
-local old_show_formspec = minetest.show_formspec
-function minetest.show_formspec(playername, formname, formspec)
+local old_show_formspec = core.show_formspec
+function core.show_formspec(playername, formname, formspec)
     last_formname = formname
     last_formspec = formspec
     last_playername = playername
@@ -10,7 +10,7 @@ end
 
 
 mtt.register("Promise.formspec", function(callback)
-    assert(type(minetest.registered_on_player_receive_fields) == "table")
+    assert(type(core.registered_on_player_receive_fields) == "table")
 
     local player = {
         get_player_name = function() return "singleplayer" end,
@@ -27,7 +27,7 @@ mtt.register("Promise.formspec", function(callback)
     assert(last_formspec == "stuff[]")
     assert(last_playername == "singleplayer")
 
-    for _, fn in ipairs(minetest.registered_on_player_receive_fields) do
+    for _, fn in ipairs(core.registered_on_player_receive_fields) do
         fn(player, last_formname, { x=1, quit="true" })
     end
 end)

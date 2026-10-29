@@ -1,12 +1,12 @@
 -- playername -> { id => { promise, callback} }
 local formspec_promises = {}
 
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
     local playername = player:get_player_name()
     formspec_promises[playername] = nil
 end)
 
-minetest.register_on_player_receive_fields(function(player, id, fields)
+core.register_on_player_receive_fields(function(player, id, fields)
     local playername = player:get_player_name()
     local cb_map = formspec_promises[playername]
     if not cb_map then
@@ -49,6 +49,6 @@ function Promise.formspec(playername, formspec, callback)
         promise = p,
         callback = callback
     }
-    minetest.show_formspec(playername, id, formspec)
+    core.show_formspec(playername, id, formspec)
     return p
 end

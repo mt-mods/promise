@@ -5,7 +5,7 @@ function Promise.cache(seconds, fn)
 	local cache_time = 0
 	local value
 	return function()
-		local now = minetest.get_us_time()
+		local now = core.get_us_time()
 		if not value or cache_time < (now - micros) then
 			-- value does not exist or is expired
 			value = {fn()}

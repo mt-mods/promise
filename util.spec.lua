@@ -145,7 +145,7 @@ mtt.register("Promise.once", function(callback)
     callback()
 end)
 
-if minetest.get_modpath("fakelib") then
+if core.get_modpath("fakelib") then
     mtt.register("Promise.on_punch_pos", function()
         local pos = vector.new(10,20,30)
         local p = Promise.on_punch_pos(pos)
@@ -153,7 +153,7 @@ if minetest.get_modpath("fakelib") then
         local node = { name="default:mese" }
         local puncher = fakelib.create_player()
         local pointed_thing = {}
-        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+        for _, fn in ipairs(core.registered_on_punchnodes) do
             fn(pos, node, puncher, pointed_thing)
         end
 
@@ -172,7 +172,7 @@ if minetest.get_modpath("fakelib") then
         local node = { name="default:mese" }
         local puncher = fakelib.create_player()
         local pointed_thing = {}
-        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+        for _, fn in ipairs(core.registered_on_punchnodes) do
             fn(vector.add(pos, 1), node, puncher, pointed_thing)
         end
 
@@ -197,7 +197,7 @@ if minetest.get_modpath("fakelib") then
         local node = { name="default:mese" }
         local puncher = fakelib.create_player()
         local pointed_thing = {}
-        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+        for _, fn in ipairs(core.registered_on_punchnodes) do
             fn(pos, node, puncher, pointed_thing)
         end
 
@@ -217,7 +217,7 @@ if minetest.get_modpath("fakelib") then
 
         local node = { name="default:mese" }
         local pointed_thing = {}
-        for _, fn in ipairs(minetest.registered_on_punchnodes) do
+        for _, fn in ipairs(core.registered_on_punchnodes) do
             fn(pos, node, puncher, pointed_thing)
         end
 

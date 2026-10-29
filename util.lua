@@ -31,7 +31,7 @@ end
 
 function Promise.after(delay, value, err)
     return Promise.new(function(resolve, reject)
-        minetest.after(delay, function()
+        core.after(delay, function()
             if err then
                 reject(err)
             else
@@ -44,7 +44,7 @@ end
 function Promise.emerge_area(pos1, pos2)
     pos2 = pos2 or pos1
     return Promise.new(function(resolve)
-        minetest.emerge_area(pos1, pos2, function(_, _, calls_remaining)
+        core.emerge_area(pos1, pos2, function(_, _, calls_remaining)
             if calls_remaining == 0 then
                 resolve()
             end
@@ -55,9 +55,9 @@ end
 function Promise.handle_async(fn, ...)
     local args = {...}
     return Promise.new(function(resolve)
-        if minetest.handle_async then
+        if core.handle_async then
             -- use threaded async env
-            minetest.handle_async(fn, resolve, unpack(args))
+            core.handle_async(fn, resolve, unpack(args))
         else
             -- fall back to unthreaded async call
             resolve(fn(unpack(args)))
@@ -67,7 +67,7 @@ end
 
 function Promise.dynamic_add_media(options)
     return Promise.new(function(resolve, reject)
-        local success = minetest.dynamic_add_media(options, resolve)
+        local success = core.dynamic_add_media(options, resolve)
         if not success then
             reject()
         end
@@ -79,7 +79,7 @@ function Promise.mods_loaded()
     return mods_loaded_promise
 end
 
-minetest.register_on_mods_loaded(function()
+core.register_on_mods_loaded(function()
     mods_loaded_promise:resolve()
 end)
 
@@ -129,12 +129,12 @@ local function add_callback(callbacks, key, p)
 end
 
 -- cleanup playername callbacks
-minetest.register_on_leaveplayer(function(player)
+core.register_on_leaveplayer(function(player)
     local playername = player:get_player_name()
     punchnode_playernames[playername] = nil
 end)
 
-minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
+core.register_on_punchnode(function(pos, node, puncher, pointed_thing)
     local data = {
         pos = pos,
         node = node,
@@ -143,7 +143,7 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
     }
 
     -- pos callback
-    run_callbacks(punchnode_pos_hashes, minetest.hash_node_position(pos), data)
+    run_callbacks(punchnode_pos_hashes, core.hash_node_position(pos), data)
 
     -- nodename callback
     if node and node.name then
@@ -158,7 +158,7 @@ end)
 
 function Promise.on_punch_pos(pos, timeout)
     local p = Promise.new()
-    add_callback(punchnode_pos_hashes, minetest.hash_node_position(pos), p)
+    add_callback(punchnode_pos_hashes, core.hash_node_position(pos), p)
     return Promise.race(p, Promise.timeout(timeout or 5))
 end
 
