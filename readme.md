@@ -89,7 +89,7 @@ end)
 assert(p.is_promise == true) -- field value
 assert(Promise.is_promise(p)) -- function
 
-p:then(function(result)
+p:next(function(result)
     -- TODO: handle the result
 end):catch(function(err)
     -- TODO: handle the error
@@ -97,6 +97,7 @@ end)
 
 p:finally(function()
     -- always called after error or success
+    -- the original value/error is passed through to the next handler
     -- TODO: handle cleanup/common things here
 end)
 ```
@@ -105,8 +106,9 @@ Alternatively:
 ```lua
 -- promise without callback
 local p = Promise.new()
--- later on: resolve from outside
+-- later on: resolve or reject from outside
 p:resolve(result)
+-- or: p:reject(err)
 ```
 
 **NOTE:** pass a `0` to the `error` function if you want to evaluate the error directly:
@@ -123,7 +125,7 @@ Reference: https://www.lua.org/manual/5.3/manual.html#pdf-error
 
 ## `Promise.resolve(value)`
 
-Returns an already resolved promise with given value
+Returns an already resolved promise with given value (if `value` is a promise, the returned promise follows its state)
 
 ## `Promise.reject(err)`
 
@@ -182,7 +184,7 @@ end)
 
 ## `Promise.any(...)`
 
-Returns the first fulfilled promise or rejects if all promises reject.
+Resolves with the value of the first fulfilled promise or rejects with a table of all errors if all promises reject (or no promises are given).
 
 * Javascript version: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any
 
@@ -192,7 +194,7 @@ Returns a delayed promise that resolves to given value or error
 
 ## `Promise.timeout(delay)`
 
-Returns a promise that rejects with "timeout" after the given delay. Useful in comination with `Promise.race()`
+Returns a promise that rejects with "timeout" after the given delay. Useful in combination with `Promise.race()`
 
 ## `Promise.emerge_area(pos1, pos2?)`
 
@@ -207,7 +209,7 @@ Example:
 Promise.formspec(playername, "size[2,2]button_exit[0,0;2,2;mybutton;label]")
 :next(function(fields)
     -- formspec closed
-    assert(fields.mybutton == true)
+    assert(fields.mybutton == "label")
 end)
 ```
 
@@ -222,7 +224,7 @@ end
 Promise.formspec(playername, "size[2,2]button_exit[0,0;2,2;mybutton;label]", callback)
 :next(function(fields)
     -- formspec closed
-    assert(fields.mybutton == true)
+    assert(fields.mybutton == "label")
 end)
 ```
 
@@ -242,8 +244,9 @@ Http query
   * `method` The http method (default: "GET")
   * `timeout` Timeout in seconds (default: 10)
   * `data` Data to transfer, serialized as json if type is `table`
-  * `headers` table of additional headers
+  * `headers` list of additional headers, for example: `{ "Authorization: Bearer xyz" }`
 
+Resolves with a response object (`res.code`, `res.json()`, `res.text()`) for every completed request, regardless of the status code.
 Rejects with `Promise.HTTP_TIMEOUT` in case of timeouts (or connection errors)
 
 Examples:
@@ -256,7 +259,7 @@ Promise.http(http, "https://api.chucknorris.io/jokes/random"):next(function(res)
 end):next(function(joke)
     assert(type(joke.value) == "string")
 end):catch(function(e)
-    -- conection refused or timed out:
+    -- connection refused or timed out:
     -- e == Promise.HTTP_TIMEOUT
 end)
 
@@ -265,10 +268,10 @@ Promise.http(http, "http://localhost/stuff", { method = "POST", timeout = 10, da
     return res.text()
 end):next(function(result)
     assert(result)
-end):catch(function(res)
+end):catch(function(err)
     -- something went wrong with the http call itself (no response)
-    -- dump the raw http response (res.code, res.timeout)
-    print(dump(res))
+    -- err == Promise.HTTP_TIMEOUT
+    print(dump(err))
 end)
 ```
 
@@ -310,7 +313,7 @@ Resolves with the player object when the player joins (defaults to a 5 second ti
 
 ## `Promise.leaveplayer(playername, timeout?)`
 
-Resolves when the player leaves (does not resolve with a value, unlike `joinplayer`)
+Resolves with the player object when the player leaves (defaults to a 5 second timeout)
 
 ## `Promise.asyncify(fn)`
 
@@ -364,11 +367,11 @@ Simple caching utility
 
 Example:
 ```lua
-local somethingExpensive()
+local function somethingExpensive()
     return 42
 end
 
--- cached the result for 5 seconds
+-- cache the result for 5 seconds
 local cachedFn = Promise.cache(5, somethingExpensive)
 
 -- function result is cached for 5 seconds
@@ -382,7 +385,7 @@ Simple memoization utility
 
 Example:
 ```lua
-local somethingExpensive(a, b)
+local function somethingExpensive(a, b)
     return a * b
 end
 
@@ -393,7 +396,7 @@ local n = memoizedFn(2,3)
 local n2 = memoizedFn(2,3) -- memoized
 ```
 
-## `Promise.once()`
+## `Promise.once(fn)`
 
 Call-once function, useful for lazy initializations
 
@@ -411,7 +414,7 @@ fn()
 
 ## `Promise.on_punch_pos(pos, timeout?)`
 
-Resolves when the node at `pos` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolves when the node at `pos` is hit or rejects with `"timeout"` if the timeout (in seconds, default: 5) is reached.
 Resolving value:
 ```lua
 {
@@ -424,12 +427,12 @@ Resolving value:
 
 ## `Promise.on_punch_nodename(nodename, timeout?)`
 
-Resolves when the node with name `nodename` is hit or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolves when the node with name `nodename` is hit or rejects with `"timeout"` if the timeout (in seconds, default: 5) is reached.
 Resolving value is the same as `Promise.on_punch_pos`
 
 ## `Promise.on_punch_playername(playername, timeout?)`
 
-Resolves when a node is hit by the player with name `playername` or throws an error if the timeout (in seconds, default: 5) is reached.
+Resolves when a node is hit by the player with name `playername` or rejects with `"timeout"` if the timeout (in seconds, default: 5) is reached.
 Resolving value is the same as `Promise.on_punch_pos`
 
 ## `Promise.dynamic_add_media(options)`

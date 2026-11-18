@@ -1,25 +1,28 @@
 
 local function get_await(step)
     return function(p)
-        assert(coroutine.running(), "running inside a Promise.async() call")
+        local co, is_main = coroutine.running()
+        assert(co and not is_main, "await() must be called inside a Promise.async() function")
         local result = nil
+        local rejected = false
         local err = nil
 
-        -- add success/error/done callbacks
-        p:next(function(...)
-            result = {...}
-        end):catch(function(e)
+        -- add success/error callbacks and continue afterwards
+        p:next(function(value)
+            result = value
+        end, function(e)
+            rejected = true
             err = e
-        end):finally(step)
+        end):next(step)
 
         -- wait until the promise settles
         coroutine.yield()
 
         -- check if error or success
-        if err then
+        if rejected then
             return nil, err
         else
-            return unpack(result)
+            return result
         end
     end
 end

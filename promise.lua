@@ -190,12 +190,21 @@ function prototype:catch(callback)
   return self:next(nil, callback)
 end
 
+-- calls the callback on success or error and passes the original value/reason through
+-- (unless the callback throws or returns a rejected promise)
 function prototype:finally(callback)
-  return self:next(callback, callback)
+  return self:next(
+    function(value)
+      return Promise.resolve(callback()):next(function() return value end)
+    end,
+    function(reason)
+      return Promise.resolve(callback()):next(function() return Promise.reject(reason) end)
+    end
+  )
 end
 
 function prototype:resolve(value)
-  fulfill(self, value)
+  resolve(self, value)
 end
 
 function prototype:reject(reason)

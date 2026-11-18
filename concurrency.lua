@@ -65,6 +65,11 @@ function Promise.any(...)
     local errors = {}
     local error_count = 0
 
+    if #promises == 0 then
+        promise:reject(errors)
+        return promise
+    end
+
     for i,p in ipairs(promises) do
         p:next(function(v)
             promise:resolve(v)

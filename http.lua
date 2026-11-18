@@ -20,8 +20,8 @@ function Promise.http(http, url, opts)
 
     -- defaults
     opts = opts or {}
-    opts.timeout = opts.timeout or 10
-    opts.method = opts.method or "GET"
+    local timeout = opts.timeout or 10
+    local method = opts.method or "GET"
 
     return Promise.new(function(resolve, reject)
         local extra_headers = {}
@@ -39,8 +39,8 @@ function Promise.http(http, url, opts)
 
         if http_debug then
             core.log("action", "[Promise] fetch request: " .. dump({
-                method = opts.method,
-                timeout = opts.timeout,
+                method = method,
+                timeout = timeout,
                 data = data,
                 extra_headers = extra_headers,
                 url = url
@@ -49,8 +49,8 @@ function Promise.http(http, url, opts)
         http.fetch({
             url = url,
             extra_headers = extra_headers,
-            timeout = opts.timeout,
-            method = opts.method,
+            timeout = timeout,
+            method = method,
             data = data
         }, function(res)
             if http_debug then

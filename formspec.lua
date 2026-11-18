@@ -35,9 +35,12 @@ core.register_on_player_receive_fields(function(player, id, fields)
     return true
 end)
 
+local formspec_counter = 0
+
 function Promise.formspec(playername, formspec, callback)
     local p = Promise.new()
-    local id = "promise_" .. math.floor(math.random() * 100000)
+    formspec_counter = formspec_counter + 1
+    local id = "promise_" .. formspec_counter
 
     local cb_map = formspec_promises[playername]
     if not cb_map then
