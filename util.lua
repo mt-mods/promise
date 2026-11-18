@@ -17,6 +17,11 @@ function Promise.timeout(delay)
     return Promise.after(delay, nil, "timeout")
 end
 
+-- races the given promise against a timeout (default: 5 seconds)
+function Promise.with_timeout(p, timeout)
+    return Promise.race(p, Promise.timeout(timeout or 5))
+end
+
 function Promise.reject(value)
     local p = Promise.new()
     p:reject(value)
@@ -128,6 +133,24 @@ local function add_callback(callbacks, key, p)
     table.insert(list, p)
 end
 
+local function remove_callback(callbacks, key, p)
+    local list = callbacks[key]
+    if not list then
+        return
+    end
+
+    for i, entry in ipairs(list) do
+        if entry == p then
+            table.remove(list, i)
+            break
+        end
+    end
+
+    if #list == 0 then
+        callbacks[key] = nil
+    end
+end
+
 -- cleanup playername callbacks
 core.register_on_leaveplayer(function(player)
     local playername = player:get_player_name()
@@ -156,23 +179,22 @@ core.register_on_punchnode(function(pos, node, puncher, pointed_thing)
     end
 end)
 
-function Promise.on_punch_pos(pos, timeout)
-    local p = Promise.new()
-    add_callback(punchnode_pos_hashes, core.hash_node_position(pos), p)
-    return Promise.race(p, Promise.timeout(timeout or 5))
+local function punch_waiter(callbacks, key_fn)
+    return function(value, timeout)
+        local key = key_fn and key_fn(value) or value
+        local p = Promise.new()
+        add_callback(callbacks, key, p)
+        return Promise.with_timeout(p, timeout):catch(function(err)
+            -- timed out: drop the pending promise so it doesn't linger
+            remove_callback(callbacks, key, p)
+            return Promise.reject(err)
+        end)
+    end
 end
 
-function Promise.on_punch_nodename(nodename, timeout)
-    local p = Promise.new()
-    add_callback(punchnode_nodenames, nodename, p)
-    return Promise.race(p, Promise.timeout(timeout or 5))
-end
-
-function Promise.on_punch_playername(playername, timeout)
-    local p = Promise.new()
-    add_callback(punchnode_playernames, playername, p)
-    return Promise.race(p, Promise.timeout(timeout or 5))
-end
+Promise.on_punch_pos        = punch_waiter(punchnode_pos_hashes, core.hash_node_position)
+Promise.on_punch_nodename   = punch_waiter(punchnode_nodenames)
+Promise.on_punch_playername = punch_waiter(punchnode_playernames)
 
 function Promise.once(fn)
     local called = false

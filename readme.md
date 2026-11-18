@@ -196,6 +196,10 @@ Returns a delayed promise that resolves to given value or error
 
 Returns a promise that rejects with "timeout" after the given delay. Useful in combination with `Promise.race()`
 
+## `Promise.with_timeout(p, timeout?)`
+
+Shorthand for `Promise.race(p, Promise.timeout(timeout or 5))`: resolves/rejects with `p` or rejects with "timeout" after the given delay (default: 5 seconds)
+
 ## `Promise.emerge_area(pos1, pos2?)`
 
 Emerges the given area and resolves afterwards

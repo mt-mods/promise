@@ -1,42 +1,27 @@
 
--- playername -> promise
-local joinplayer_promises = {}
+-- creates a "wait for player event" function for the given registration function
+local function player_event(register)
+    -- playername -> promise
+    local promises = {}
 
-core.register_on_joinplayer(function(player)
-    local playername = player:get_player_name()
-    local p = joinplayer_promises[playername]
-    if p then
-        p:resolve(player)
-        joinplayer_promises[playername] = nil
-    end
-end)
+    register(function(player)
+        local playername = player:get_player_name()
+        local p = promises[playername]
+        if p then
+            promises[playername] = nil
+            p:resolve(player)
+        end
+    end)
 
-function Promise.joinplayer(playername, timeout)
-    local p = joinplayer_promises[playername]
-    if not p then
-        p = Promise.new()
-        joinplayer_promises[playername] = p
+    return function(playername, timeout)
+        local p = promises[playername]
+        if not p then
+            p = Promise.new()
+            promises[playername] = p
+        end
+        return Promise.with_timeout(p, timeout)
     end
-    return Promise.race(p, Promise.timeout(timeout or 5))
 end
 
--- playername -> promise
-local leaveplayer_promises = {}
-
-core.register_on_leaveplayer(function(player)
-    local playername = player:get_player_name()
-    local p = leaveplayer_promises[playername]
-    if p then
-        p:resolve(player)
-        leaveplayer_promises[playername] = nil
-    end
-end)
-
-function Promise.leaveplayer(playername, timeout)
-    local p = leaveplayer_promises[playername]
-    if not p then
-        p = Promise.new()
-        leaveplayer_promises[playername] = p
-    end
-    return Promise.race(p, Promise.timeout(timeout or 5))
-end
+Promise.joinplayer  = player_event(core.register_on_joinplayer)
+Promise.leaveplayer = player_event(core.register_on_leaveplayer)
